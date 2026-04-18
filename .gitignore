@@ -1,0 +1,12 @@
+# Real user configs and settings — keep examples in-repo but not real data.
+vmconfigs/settings
+vmconfigs/**/[0-9]*.conf
+vmconfigs/backups/
+
+# Keep the .example.conf files tracked (explicit allow).
+!vmconfigs/**/*.example.conf
+
+# Editor / OS junk
+*.swp
+*.bak
+.DS_Store

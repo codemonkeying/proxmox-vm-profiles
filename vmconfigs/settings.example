@@ -1,0 +1,21 @@
+# Copy to `settings` and edit for your environment:
+#   cp settings.example settings
+
+# Default VMID to start when no argument given.
+DEFAULT=110
+
+# Default profile to use when no second argument given.
+# Valid values: full, minimal, testing, auto, default
+#   full     - load {VMID}_full.conf
+#   minimal  - load {VMID}_minimal.conf
+#   testing  - load {VMID}_testing.conf
+#   auto     - load {VMID}_auto.conf + detect connected USB mappings
+#              (requires proxmox-usb-hotplug — https://github.com/codemonkeying/proxmox-usb-hotplug)
+#   default  - use whatever is already in /etc/pve/qemu-server/{VMID}.conf
+DEFAULT_PROFILE=minimal
+
+# Anchor PCI resource mapping for shared-* USB device routing.
+# Only used by the 'auto' profile via proxmox-usb-hotplug. Leave empty if
+# you don't use shared-* USB devices. Must match the name you gave the
+# mapping in Proxmox (Datacenter -> Resource Mappings -> PCI).
+GPU_MAPPING=""
