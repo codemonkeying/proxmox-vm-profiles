@@ -22,6 +22,10 @@ fi
 
 source "$SETTINGS_FILE"
 
+# Number of per-VM backups to keep in $BACKUP_DIR. Older ones are pruned
+# after each successful backup. Override via settings or env var.
+BACKUP_KEEP="${BACKUP_KEEP:-10}"
+
 # Optional USB hotplug helper (proxmox-usb-hotplug) — only needed by the 'auto' profile.
 USB_HELPER="${USB_HELPER:-/usr/local/bin/usb-mapping-helper.sh}"
 [[ -f "$USB_HELPER" ]] && source "$USB_HELPER"
@@ -138,6 +142,14 @@ if [[ -f "$PVE_CONFIG" ]]; then
     mkdir -p "$BACKUP_DIR"
     cp "$PVE_CONFIG" "$BACKUP_FILE"
     echo "Backed up current config to: $BACKUP_FILE"
+
+    # Prune older backups for this VMID, keeping the newest $BACKUP_KEEP
+    pruned=$(ls -1t "${BACKUP_DIR}/${VMID}_"*.conf 2>/dev/null | tail -n +$((BACKUP_KEEP + 1)))
+    if [[ -n "$pruned" ]]; then
+        count=$(echo "$pruned" | wc -l)
+        echo "$pruned" | xargs -r rm -f --
+        echo "Pruned $count old backup(s) for VM ${VMID} (keeping newest ${BACKUP_KEEP})"
+    fi
 fi
 
 if [[ "$PROFILE" == "default" ]]; then

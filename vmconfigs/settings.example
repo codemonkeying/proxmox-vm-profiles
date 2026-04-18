@@ -19,3 +19,7 @@ DEFAULT_PROFILE=minimal
 # you don't use shared-* USB devices. Must match the name you gave the
 # mapping in Proxmox (Datacenter -> Resource Mappings -> PCI).
 GPU_MAPPING=""
+
+# Number of per-VM backups retained in vmconfigs/backups/ after each run.
+# Older backups for the same VMID are pruned automatically. Default: 10.
+#BACKUP_KEEP=10

@@ -86,11 +86,19 @@ The quickest way to get a starting point is `qm config VMID > vmconfigs/VMID/VMI
 
 ## Backups
 
-Every `start.sh` run writes a timestamped copy of the current `/etc/pve/qemu-server/{VMID}.conf` to `vmconfigs/backups/` before overwriting it. Nothing auto-prunes them — clean up manually when they pile up:
+Every `start.sh` run writes a timestamped copy of the current `/etc/pve/qemu-server/{VMID}.conf` to `vmconfigs/backups/` before overwriting it. After the new backup lands, older backups for the same VMID are pruned automatically — the newest **10** per VM are retained.
+
+Override the retention count in `settings` (persistent) or via env var (one-shot):
 
 ```bash
-find vmconfigs/backups -name "*.conf" -mtime +30 -delete
+# in vmconfigs/settings
+BACKUP_KEEP=20
+
+# or per-invocation
+BACKUP_KEEP=50 ./start.sh 110 minimal
 ```
+
+Pruning is strictly per-VMID — backups for other VMs aren't touched. Set `BACKUP_KEEP` to a very large number if you want to effectively disable pruning.
 
 ## Integration with proxmox-usb-hotplug
 
