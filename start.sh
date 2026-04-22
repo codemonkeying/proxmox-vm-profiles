@@ -199,6 +199,19 @@ fi
 echo "Starting VM ${VMID}..."
 qm start "$VMID"
 
+# Optional per-VM post-start hook. If ${VM_CONFIG_DIR}/hook.sh exists and is
+# executable, it runs here with ($VMID, $PROFILE) as args. Non-zero exit is
+# logged but does not abort the rest of start.sh.
+HOOK_SCRIPT="${VM_CONFIG_DIR}/hook.sh"
+if [[ -x "$HOOK_SCRIPT" ]]; then
+    echo "Running post-start hook: $HOOK_SCRIPT"
+    if ! "$HOOK_SCRIPT" "$VMID" "$PROFILE"; then
+        echo "Warning: hook script exited non-zero (rc=$?)"
+    fi
+elif [[ -f "$HOOK_SCRIPT" ]]; then
+    echo "Warning: $HOOK_SCRIPT exists but is not executable — skipping"
+fi
+
 if [[ "$PROFILE" == "auto" ]]; then
     echo "${VMID}" > /var/run/usb-hotplug-auto-vm.state
     echo "VM ${VMID} marked for USB auto-monitoring"

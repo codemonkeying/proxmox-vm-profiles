@@ -2,6 +2,7 @@
 vmconfigs/settings
 vmconfigs/**/[0-9]*.conf
 vmconfigs/backups/
+vmconfigs/**/hook.sh
 
 # Keep the .example.conf files tracked (explicit allow).
 !vmconfigs/**/*.example.conf

@@ -84,6 +84,20 @@ VMCONFIGS_DIR=/etc/proxmox-vm-profiles ./start.sh 110 minimal
 
 The quickest way to get a starting point is `qm config VMID > vmconfigs/VMID/VMID_newprofile.conf`, then trim or add lines. Proxmox expects keys in alphabetical order in the main section (`[PENDING]` / `[snapshot]` sections come after and do **not** need to be sorted). See the `*.example.conf` files for a minimal template.
 
+## Per-VM post-start hook (optional)
+
+If `vmconfigs/<VMID>/hook.sh` exists and is executable, `start.sh` runs it after `qm start` succeeds. Useful for per-VM post-start actions — USB device fixes, wake-on-LAN pings, alerting, etc.
+
+The hook is called as:
+
+```
+hook.sh <VMID> <PROFILE>
+```
+
+A non-zero exit is logged as a warning but doesn't abort the rest of `start.sh` (the VM is already running).
+
+Example skeleton is provided at [vmconfigs/110/hook.example.sh](vmconfigs/110/hook.example.sh). Copy to `hook.sh` in the same directory and `chmod +x` to activate. Hook scripts are per-install and are gitignored (`vmconfigs/**/hook.sh`).
+
 ## Backups
 
 Every `start.sh` run writes a timestamped copy of the current `/etc/pve/qemu-server/{VMID}.conf` to `vmconfigs/backups/` before overwriting it. After the new backup lands, older backups for the same VMID are pruned automatically — the newest **10** per VM are retained.
